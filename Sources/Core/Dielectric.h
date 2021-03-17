@@ -33,7 +33,7 @@ public:
       }
 
 
-      scattered = Ray(rec.p, dir);
+      scattered = Ray(rec.p, dir, rayIn.Time);
       return true;
    }
 

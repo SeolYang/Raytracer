@@ -104,6 +104,7 @@
     <ClInclude Include="..\Sources\Core\Lambertian.h" />
     <ClInclude Include="..\Sources\Core\Material.h" />
     <ClInclude Include="..\Sources\Core\Metal.h" />
+    <ClInclude Include="..\Sources\Core\MovingSphere.h" />
     <ClInclude Include="..\Sources\Core\Sphere.h" />
     <ClInclude Include="..\Sources\Math\MathCommon.h" />
     <ClInclude Include="..\Sources\Math\MathMinimal.h" />

@@ -19,7 +19,7 @@ public:
          scatterDirection = rec.n;
       }
 
-      scattered = Ray(rec.p, scatterDirection);
+      scattered = Ray(rec.p, scatterDirection, rayIn.Time);
       attenuation = Albedo;
       return true;
    }

@@ -77,5 +77,8 @@
     <ClInclude Include="..\Sources\Core\Dielectric.h">
       <Filter>Sources\Core\Materials</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Core\MovingSphere.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

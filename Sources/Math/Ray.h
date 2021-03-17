@@ -4,15 +4,14 @@
 class Ray
 {
 public:
-   Ray() :
-      Origin(Point3(0.0, 0.0, 0.0)),
-      Direction(Vec3(0.0, 0.0, 1.0))
+   Ray()
    {
    }
 
-   Ray(const Point3& origin, const Vec3& direction) :
+   Ray(const Point3& origin, const Vec3& direction, double time = 0.0) :
       Origin(origin),
-      Direction(direction)
+      Direction(direction),
+      Time(time)
    {
    }
 
@@ -24,5 +23,6 @@ public:
 public:
    Point3 Origin;
    Vec3 Direction;
+   double Time = 0.0;
 
 };

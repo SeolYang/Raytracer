@@ -16,7 +16,7 @@ public:
    bool Scatter(const Ray& rayIn, const HitRecord& rec, Color& attenuation, Ray& scattered) const override
    {
       Vec3 reflected = Reflect(UnitVectorOf(rayIn.Direction), rec.n);
-      scattered = Ray(rec.p, reflected + Fuzz*RandomInHemisphere(rec.n));
+      scattered = Ray(rec.p, reflected + Fuzz*RandomInHemisphere(rec.n), rayIn.Time);
       attenuation = Albedo;
       return (Dot(scattered.Direction, rec.n) > 0.0);
    }

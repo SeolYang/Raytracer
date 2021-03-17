@@ -7,10 +7,63 @@
 #include <Core/Lambertian.h>
 #include <Core/Metal.h>
 #include <Core/Dielectric.h>
+#include <Core/MovingSphere.h>
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
-
 #include <iostream>
+
+std::unique_ptr<HittableList> RandomScene(double shutterOpen = 0.0, double shutterClose = 1.0)
+{
+	auto world = std::make_unique<HittableList>();
+	auto groundMaterial = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
+	world->Add(std::make_shared<Sphere>(Point3(0.0, -1000.0, 0.0), 1000.0, groundMaterial));
+	for (int dy = -11; dy < 11; ++dy)
+	{
+		for (int dx = -11; dx < 11; ++dx)
+		{
+			auto chooseMat = RandomDouble();
+			Point3 center(static_cast<double>(dx) + 0.9 + RandomDouble(), 0.2, static_cast<double>(dy) + 0.9 * RandomDouble());
+			auto randRad = RandomDouble(0.2f, 0.25f);
+			if ((center - Vec3(4.0, 0.2, 0.0)).Length() > 0.9)
+			{
+				std::shared_ptr<Material> sphereMatPtr;
+				if (chooseMat < 0.8)
+				{
+					// Diffuse
+					auto albedo = Color::Random() * Color::Random();
+					sphereMatPtr = std::make_shared<Lambertian>(albedo);
+					auto center1 = center + Vec3(0.0, RandomDouble(0.0, 0.5), 0.0); // y축으로 움직임
+					world->Add(std::make_shared<MovingSphere>(center, center1, shutterOpen, shutterClose, randRad, sphereMatPtr));
+				}
+				else if (chooseMat < 0.95)
+				{
+					// Metal
+					auto albedo = Color::Random(0.5, 1.0);
+					auto fuzz = RandomDouble(0.0, 0.5);
+					auto center1 = center + Vec3(RandomDouble(0.0, 0.5), 0.0, 0.0); // x축으로 움직임
+					sphereMatPtr = std::make_shared<Metal>(albedo, fuzz);
+					world->Add(std::make_shared<MovingSphere>(center, center1, shutterOpen, shutterClose, randRad, sphereMatPtr));
+				}
+				else
+				{
+					// Glass
+					sphereMatPtr = std::make_shared<Dielectric>(1.5);
+					world->Add(std::make_shared<Sphere>(center, randRad, sphereMatPtr));
+				}
+			}
+		}
+	}
+
+	auto dielectricMatPtr = std::make_shared<Dielectric>(1.5);
+	auto lambertianMatPtr = std::make_shared<Lambertian>(Color(0.4, 0.2, 0.1));
+	auto metalMatPtr = std::make_shared<Metal>(Color(0.7, 0.6, 0.5), 0.0);
+
+	world->Add(std::make_shared<Sphere>(Point3(0.0, 1.0, 0.0), 1.0, dielectricMatPtr));
+	world->Add(std::make_shared<Sphere>(Point3(-4.0, 1.0, 0.0), 1.0, lambertianMatPtr));
+	world->Add(std::make_shared<Sphere>(Point3(4.0, 1.0, 0.0), 1.0, metalMatPtr));
+
+	return std::move(world);
+}
 
 Color RayColor(const Ray& r, const Hittable& world, int depth)
 {
@@ -49,26 +102,18 @@ int main()
 
 	auto outputBuffer = std::make_unique<unsigned char[]>(imageWidth*imageHeight*imageChannels);
 
-	// World
-	auto groundMaterial = std::make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-	auto centerMaterial = std::make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-	auto leftMaterial = std::make_shared<Dielectric>(1.5);
-	auto rightMaterial = std::make_shared<Metal>(Color(0.8, 0.6, 0.2), 1.0);
-
-	HittableList world;
-	world.Add(std::make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0, groundMaterial));
-	world.Add(std::make_shared<Sphere>(Point3(0.0, 0.0, -1.0), 0.5, centerMaterial));
-	world.Add(std::make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), 0.5, leftMaterial));
-	world.Add(std::make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), -0.4, leftMaterial));
-	world.Add(std::make_shared<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, rightMaterial));
-
 	// Camera
-	Point3 lookFrom(3.0, 3.0, 2.0);
-	Point3 lookAt(0.0, 0.0, -1.0);
+	Point3 lookFrom(13.0, 2.0, 3.0);
+	Point3 lookAt(0.0, 0.0, 0.0);
 	Vec3 up(0.0, 1.0, 0.0);
-	auto distToFocus = (lookFrom - lookAt).Length();
-	auto aperture = 2.0;
-	Camera cam(lookFrom, lookAt, up, 20, aspectRatio, aperture, distToFocus);
+	auto distToFocus = 10.0;
+	auto aperture = 0.1;
+	auto shutterOpen = 0.0;
+	auto shutterClose = 1.0;
+	Camera cam(lookFrom, lookAt, up, 45, aspectRatio, aperture, distToFocus, shutterOpen, shutterClose);
+
+	// World
+	auto world = std::move(RandomScene(shutterOpen, shutterClose));
 
 	// Render
 #pragma omp parallel for schedule(dynamic, 1)
@@ -83,7 +128,7 @@ int main()
 				auto u = (double(dx) + RandomDouble()) / (imageWidth - 1);
 				auto v = (double(dy) + RandomDouble()) / (imageHeight - 1);
 				Ray r = cam.GetRay(u, v);
-				pixelColor += RayColor(r, world, maximumDepth);
+				pixelColor += RayColor(r, *world, maximumDepth);
 			}
 
 			size_t base = ((imageHeight - dy - 1) * imageWidth * imageChannels) + (dx * imageChannels);
