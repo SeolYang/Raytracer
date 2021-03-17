@@ -61,7 +61,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Sources; $(SolutionDir)..\Thirdparty\stb\includes;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -80,7 +80,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\Sources</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Sources; $(SolutionDir)..\Thirdparty\stb\includes;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
@@ -93,6 +93,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Sources\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Sources\Core\Camera.h" />
+    <ClInclude Include="..\Sources\Core\Color.h" />
+    <ClInclude Include="..\Sources\Core\CoreMinimal.h" />
+    <ClInclude Include="..\Sources\Core\Dielectric.h" />
+    <ClInclude Include="..\Sources\Core\Hittable.h" />
+    <ClInclude Include="..\Sources\Core\HittableList.h" />
+    <ClInclude Include="..\Sources\Core\Lambertian.h" />
+    <ClInclude Include="..\Sources\Core\Material.h" />
+    <ClInclude Include="..\Sources\Core\Metal.h" />
+    <ClInclude Include="..\Sources\Core\Sphere.h" />
+    <ClInclude Include="..\Sources\Math\MathCommon.h" />
+    <ClInclude Include="..\Sources\Math\MathMinimal.h" />
+    <ClInclude Include="..\Sources\Math\Ray.h" />
+    <ClInclude Include="..\Sources\Math\Vec3.h" />
+    <ClInclude Include="..\Thirdparty\stb\includes\stb\stb_image.h" />
+    <ClInclude Include="..\Thirdparty\stb\includes\stb\stb_image_write.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

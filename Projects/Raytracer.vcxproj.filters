@@ -4,10 +4,78 @@
     <Filter Include="Sources">
       <UniqueIdentifier>{d40f613a-dd6a-4fcd-a3e1-3b514fe0fc6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Math">
+      <UniqueIdentifier>{4efe8f24-992f-4afc-8a56-91e0fff15e7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Thirdparty">
+      <UniqueIdentifier>{14590bc4-a466-4550-9d69-e9768ce7aafc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core">
+      <UniqueIdentifier>{b453bbef-94e0-430d-b071-e7a8f41ba3f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Thirdparty\stb">
+      <UniqueIdentifier>{d5aae8db-ddcb-4544-a2c5-a809edc20489}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core\Hittable">
+      <UniqueIdentifier>{44424b81-2c21-46f5-b067-596f7d04f8f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Core\Materials">
+      <UniqueIdentifier>{d89b171d-f2e6-4775-b801-7a5696051f76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Sources\main.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Sources\Math\Vec3.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Math\MathMinimal.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\CoreMinimal.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Thirdparty\stb\includes\stb\stb_image.h">
+      <Filter>Sources\Thirdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Thirdparty\stb\includes\stb\stb_image_write.h">
+      <Filter>Sources\Thirdparty\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Math\MathCommon.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Color.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Math\Ray.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Sphere.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Hittable.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\HittableList.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Camera.h">
+      <Filter>Sources\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Material.h">
+      <Filter>Sources\Core\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Lambertian.h">
+      <Filter>Sources\Core\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Metal.h">
+      <Filter>Sources\Core\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Dielectric.h">
+      <Filter>Sources\Core\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
