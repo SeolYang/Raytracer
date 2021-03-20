@@ -92,5 +92,8 @@
     <ClInclude Include="..\Sources\Core\Texture.h">
       <Filter>Sources\Core\Textures</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Core\ImageTexture.h">
+      <Filter>Sources\Core\Textures</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

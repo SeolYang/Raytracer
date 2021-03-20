@@ -9,6 +9,7 @@
 #include <Core/Dielectric.h>
 #include <Core/MovingSphere.h>
 #include <Core/Texture.h>
+#include <Core/ImageTexture.h>
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
 #include <iostream>
@@ -81,6 +82,18 @@ std::unique_ptr<HittableList> TwoSpheres()
 	return std::move(world);
 }
 
+std::unique_ptr<HittableList> Earth()
+{
+	auto world = std::make_unique<HittableList>();
+
+	auto earthTexture = std::make_shared<ImageTexture>("Resources/Textures/earthmap.jpg");
+	auto earthMat = std::make_shared<Lambertian>(earthTexture);
+
+	world->Add(std::make_shared<Sphere>(Point3(0.0, 0.0, 0.0), 2.0, earthMat));
+
+	return std::move(world);
+}
+
 Color RayColor(const Ray& r, const Hittable& world, int depth)
 {
 	if (depth <= 0)
@@ -126,11 +139,13 @@ int main()
 	auto aperture = 0.1;
 	auto shutterOpen = 0.0;
 	auto shutterClose = 1.0;
-	Camera cam(lookFrom, lookAt, up, 45, aspectRatio, aperture, distToFocus, shutterOpen, shutterClose);
+	auto verticalFOV = 20.0;
+	Camera cam(lookFrom, lookAt, up, verticalFOV, aspectRatio, aperture, distToFocus, shutterOpen, shutterClose);
 
 	// World
 	//auto world = std::move(RandomScene(shutterOpen, shutterClose));
-	auto world = std::move(TwoSpheres());
+	//auto world = std::move(TwoSpheres());
+	auto world = std::move(Earth());
 
 	// Render
 #pragma omp parallel for schedule(dynamic, 1)
