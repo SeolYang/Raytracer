@@ -17,6 +17,8 @@ public:
    Vec3 n;
    std::shared_ptr<class Material> MatPtr;
    double t = 0.0;
+   double u = 0.0;
+   double v = 0.0;
    bool bFrontFace = false;
 
 };

@@ -8,6 +8,7 @@
 #include <Core/Metal.h>
 #include <Core/Dielectric.h>
 #include <Core/MovingSphere.h>
+#include <Core/Texture.h>
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
 #include <iostream>
@@ -16,7 +17,9 @@ std::unique_ptr<HittableList> RandomScene(double shutterOpen = 0.0, double shutt
 {
 	auto world = std::make_unique<HittableList>();
 	auto groundMaterial = std::make_shared<Lambertian>(Color(0.5, 0.5, 0.5));
-	world->Add(std::make_shared<Sphere>(Point3(0.0, -1000.0, 0.0), 1000.0, groundMaterial));
+	auto checkerTexture = std::make_shared<CheckerTexture>(Color(0.2, 0.3, 0.1), Color(0.9, 0.9, 0.9));
+	auto checkerMat = std::make_shared<Lambertian>(checkerTexture);
+	world->Add(std::make_shared<Sphere>(Point3(0.0, -1000.0, 0.0), 1000.0, checkerMat));
 	for (int dy = -11; dy < 11; ++dy)
 	{
 		for (int dx = -11; dx < 11; ++dx)
@@ -61,6 +64,19 @@ std::unique_ptr<HittableList> RandomScene(double shutterOpen = 0.0, double shutt
 	world->Add(std::make_shared<Sphere>(Point3(0.0, 1.0, 0.0), 1.0, dielectricMatPtr));
 	world->Add(std::make_shared<Sphere>(Point3(-4.0, 1.0, 0.0), 1.0, lambertianMatPtr));
 	world->Add(std::make_shared<Sphere>(Point3(4.0, 1.0, 0.0), 1.0, metalMatPtr));
+
+	return std::move(world);
+}
+
+std::unique_ptr<HittableList> TwoSpheres()
+{
+	auto world = std::make_unique<HittableList>();
+
+	auto checkerTexture = std::make_shared<CheckerTexture>(Color(0.2, 0.3, 0.1), Color(0.9, 0.9, 0.9));
+	auto checkerMat = std::make_shared<Lambertian>(checkerTexture);
+
+	world->Add(std::make_shared<Sphere>(Point3(0.0, -10.0, 0.0), 10.0, checkerMat));
+	world->Add(std::make_shared<Sphere>(Point3(0.0, 10.0, 0.0), 10.0, checkerMat));
 
 	return std::move(world);
 }
@@ -113,7 +129,8 @@ int main()
 	Camera cam(lookFrom, lookAt, up, 45, aspectRatio, aperture, distToFocus, shutterOpen, shutterClose);
 
 	// World
-	auto world = std::move(RandomScene(shutterOpen, shutterClose));
+	//auto world = std::move(RandomScene(shutterOpen, shutterClose));
+	auto world = std::move(TwoSpheres());
 
 	// Render
 #pragma omp parallel for schedule(dynamic, 1)

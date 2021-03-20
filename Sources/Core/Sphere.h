@@ -39,6 +39,7 @@ public:
       rec.p = r.At(rec.t);
       Vec3 outwardNormal = (rec.p - Center) / Radius;
       rec.SetFaceNormal(r, outwardNormal);
+      Sphere::GetSphereUV(outwardNormal, rec.u, rec.v);
       rec.MatPtr = MaterialPtr;
 
       return true;
@@ -50,6 +51,15 @@ public:
          Center - Vec3(Radius, Radius, Radius),
          Center + Vec3(Radius, Radius, Radius));
       return true;
+   }
+
+   static void GetSphereUV(const Point3& p, double& u, double& v)
+   {
+      auto theta = std::acos(-p.y);
+      auto phi = std::atan2(-p.z, p.x) + Pi;
+
+      u = phi / (2.0 * Pi);
+      v = theta / Pi;
    }
 
 public:

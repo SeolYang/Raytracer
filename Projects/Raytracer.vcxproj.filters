@@ -22,6 +22,9 @@
     <Filter Include="Sources\Core\Materials">
       <UniqueIdentifier>{d89b171d-f2e6-4775-b801-7a5696051f76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sources\Core\Textures">
+      <UniqueIdentifier>{bad3a9a7-e99b-4497-9e0b-d76022bf23f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Sources\main.cpp">
@@ -85,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="..\Sources\Core\BVHNode.h">
       <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Texture.h">
+      <Filter>Sources\Core\Textures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

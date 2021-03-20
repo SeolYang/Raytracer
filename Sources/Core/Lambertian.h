@@ -2,11 +2,17 @@
 #include <Core/CoreMinimal.h>
 #include <Core/Hittable.h>
 #include <Core/Material.h>
+#include <Core/Texture.h>
 
 class Lambertian : public Material
 {
 public:
    Lambertian(const Color& albedo) :
+      Albedo(std::make_shared<SolidColorTexture>(albedo))
+   {
+   }
+
+   Lambertian(std::shared_ptr<Texture> albedo) :
       Albedo(albedo)
    {
    }
@@ -20,11 +26,11 @@ public:
       }
 
       scattered = Ray(rec.p, scatterDirection, rayIn.Time);
-      attenuation = Albedo;
+      attenuation = Albedo->Value(rec.u, rec.v, rec.p);
       return true;
    }
 
 public:
-   Color Albedo;
+   std::shared_ptr<Texture> Albedo;
 
 };
