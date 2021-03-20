@@ -44,6 +44,14 @@ public:
       return true;
    }
 
+   bool BoundingBox(double time0, double time1, AABB& outputBox) const override
+   {
+      outputBox = AABB(
+         Center - Vec3(Radius, Radius, Radius),
+         Center + Vec3(Radius, Radius, Radius));
+      return true;
+   }
+
 public:
    Point3 Center = Point3();
    double Radius = 1.0;

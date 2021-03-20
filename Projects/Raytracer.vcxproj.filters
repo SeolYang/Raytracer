@@ -80,5 +80,11 @@
     <ClInclude Include="..\Sources\Core\MovingSphere.h">
       <Filter>Sources\Core\Hittable</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Math\AABB.h">
+      <Filter>Sources\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\BVHNode.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

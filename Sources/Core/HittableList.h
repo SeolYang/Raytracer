@@ -23,8 +23,9 @@ public:
    }
 
    std::vector<std::shared_ptr<Hittable>>& GetObjects() { return m_objects; }
+   const std::vector<std::shared_ptr<Hittable>>& GetObjects() const { return m_objects; }
 
-   virtual bool Hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const override
+   bool Hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const override
    {
       HitRecord tempRec;
       bool bHitAnything = false;
@@ -43,7 +44,30 @@ public:
       return bHitAnything;
    }
 
+   bool BoundingBox(double time0, double time1, AABB& outputBox) const override
+   {
+      if (m_objects.empty())
+      {
+         return false;
+      }
+
+      AABB tempBox;
+      bool bFirstBox = true;
+
+      for (const auto& object : m_objects)
+      {
+         if (!object->BoundingBox(time0, time1, tempBox))
+         {
+            outputBox = bFirstBox ? tempBox : AABB::SurroundingBox(tempBox, outputBox);
+            bFirstBox = false;
+         }
+      }
+
+      return true;
+   }
+
 private:
+   friend class BVHNode;
    std::vector<std::shared_ptr<Hittable>> m_objects;
 
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/CoreMinimal.h>
 #include <Math/Ray.h>
+#include <Math/AABB.h>
 
 struct HitRecord
 {
@@ -24,5 +25,6 @@ class Hittable
 {
 public:
    virtual bool Hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const = 0;
+   virtual bool BoundingBox(double time0, double time1, AABB& outputBox) const = 0;
 
 };

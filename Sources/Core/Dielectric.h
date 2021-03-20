@@ -15,7 +15,7 @@ public:
    bool Scatter(const Ray& rayIn, const HitRecord& rec, Color& attenuation, Ray& scattered) const override
    {
       attenuation = Color(1.0, 1.0, 1.0);
-      double refractionRatio = rec.bFrontFace ? (1.0 / IOR) : IOR;
+      double refractionRatio = rec.bFrontFace ? (1.0 / IOR) : IOR; // 1.0/IOR = Air(or vaccum)->IOR interaction
 
       Vec3 unitDir = UnitVectorOf(rayIn.Direction);
       double cosTheta = std::fmin(Dot(-unitDir, rec.n), 1.0);
@@ -23,7 +23,7 @@ public:
 
       bool bCannotRefract = refractionRatio * sinTheta > 1.0;
       Vec3 dir;
-      if (bCannotRefract || Reflectance(cosTheta, refractionRatio) > RandomDouble())
+      if (bCannotRefract || Reflectance(cosTheta, rec.bFrontFace ? 1.0 : IOR, rec.bFrontFace ? IOR : 1.0) > RandomDouble())
       {
          dir = Reflect(unitDir, rec.n);
       }
@@ -38,10 +38,10 @@ public:
    }
 
 private:
-   static double Reflectance(double cosine, double refIdx)
+   static double Reflectance(double cosine, double n1, double n2)
    {
-      // Schlick's approximation for reflectance
-      auto r0 = (1.0 - refIdx) / (1 + refIdx);
+      // Schlick's approximation for reflectance for Air/Vaccum-medium interaction
+      auto r0 = (n1 - n2) / (n1 + n2);
       r0 = r0 * r0;
       return r0 + (1.0 - r0) * pow((1.0 - cosine), 5);
    }

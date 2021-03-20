@@ -95,6 +95,7 @@
     <ClCompile Include="..\Sources\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Sources\Core\BVHNode.h" />
     <ClInclude Include="..\Sources\Core\Camera.h" />
     <ClInclude Include="..\Sources\Core\Color.h" />
     <ClInclude Include="..\Sources\Core\CoreMinimal.h" />
@@ -106,6 +107,7 @@
     <ClInclude Include="..\Sources\Core\Metal.h" />
     <ClInclude Include="..\Sources\Core\MovingSphere.h" />
     <ClInclude Include="..\Sources\Core\Sphere.h" />
+    <ClInclude Include="..\Sources\Math\AABB.h" />
     <ClInclude Include="..\Sources\Math\MathCommon.h" />
     <ClInclude Include="..\Sources\Math\MathMinimal.h" />
     <ClInclude Include="..\Sources\Math\Ray.h" />

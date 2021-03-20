@@ -51,6 +51,17 @@ public:
 
    Point3 Center(double currentTime) const { return Center0 + (((currentTime - Time0) / (Time1 - Time0)) * (Center1 - Center0)); }
 
+   bool BoundingBox(double time0, double time1, AABB& outputBox) const override
+   {
+      Point3 center0 = Center(time0);
+      Point3 center1 = Center(time1);
+      Vec3 rad = Vec3(Radius, Radius, Radius);
+      AABB box0(center0 - rad, center0 + rad);
+      AABB box1(center1 - rad, center1 + rad);
+      outputBox = AABB::SurroundingBox(box0, box1);
+      return true;
+   }
+
 public:
    Point3 Center0, Center1;
    double Time0 = 0.0, Time1 = 0.0;
