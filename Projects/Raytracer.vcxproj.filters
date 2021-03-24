@@ -107,5 +107,11 @@
     <ClInclude Include="..\Sources\Core\Instance.h">
       <Filter>Sources\Core\Hittable</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Core\ConstantMedium.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Sources\Core\Isotropic.h">
+      <Filter>Sources\Core\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

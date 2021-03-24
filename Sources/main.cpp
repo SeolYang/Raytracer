@@ -14,6 +14,8 @@
 #include <Core/Rect.h>
 #include <Core/Box.h>
 #include <Core/Instance.h>
+#include <Core/ConstantMedium.h>
+#include <Core/BVHNode.h>
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
 #include <iostream>
@@ -148,6 +150,96 @@ std::unique_ptr<HittableList> CornellBox()
 	return std::move(world);
 }
 
+std::unique_ptr<HittableList> CornellBoxSmoke()
+{
+	auto world = std::make_unique<HittableList>();
+
+	auto redMat = std::make_shared<Lambertian>(Color(0.65, 0.05, 0.05));
+	auto whiteMat = std::make_shared<Lambertian>(Color(0.73, 0.73, 0.73));
+	auto greenMat = std::make_shared<Lambertian>(Color(0.12, 0.45, 0.15));
+	auto lightMat = std::make_shared<DiffuseLight>(Color(15.0, 15.0, 15.0));
+
+	world->Add(std::make_shared<YZRect>(0.0, 555.0, 0.0, 555.0, 555.0, greenMat));
+	world->Add(std::make_shared<YZRect>(0.0, 555.0, 0.0, 555.0, 0.0, redMat));
+	world->Add(std::make_shared<XZRect>(113.0, 443.0, 127.0, 432.0, 553.9, lightMat));
+	world->Add(std::make_shared<XZRect>(0.0, 555.0, 0.0, 555.0, 0.0, whiteMat));
+	world->Add(std::make_shared<XZRect>(0.0, 555.0, 0.0, 555.0, 555.0, whiteMat));
+	world->Add(std::make_shared<XYRect>(0.0, 555.0, 0.0, 555.0, 555.0, whiteMat));
+
+	std::shared_ptr<Hittable> box0 = std::make_shared<Box>(Point3(0.0, 0.0, 0.0), Point3(165.0, 330.0, 165.0), whiteMat);
+	box0 = std::make_shared<RotateY>(box0, 15.0);
+	box0 = std::make_shared<Translate>(box0, Vec3(265.0, 0.0, 295.0));
+	world->Add(std::make_shared<ConstantMedium>(box0, 0.01, Color()));
+
+	std::shared_ptr<Hittable> box1 = std::make_shared<Box>(Point3(0.0, 0.0, 0.0), Point3(165.0, 165.0, 165.0), whiteMat);
+	box1 = std::make_shared<RotateY>(box1, -18.0);
+	box1 = std::make_shared<Translate>(box1, Vec3(130.0, 0.0, 65.0));
+	world->Add(std::make_shared<ConstantMedium>(box1, 0.01, Color(1.0, 1.0, 1.0)));
+
+	return std::move(world);
+}
+
+std::unique_ptr<HittableList> ComplexScene()
+{
+	auto objects = std::make_unique<HittableList>();
+
+	HittableList boxes0;
+	auto groundMat = std::make_shared<Lambertian>(Color(0.48, 0.83, 0.53));
+
+	constexpr int BoxesPerSide = 20;
+	for (int dx = 0; dx < BoxesPerSide; ++dx)
+	{
+		for (int dz = 0; dz < BoxesPerSide; ++dz)
+		{
+			double w = 100.0;
+			double x0 = -1000.0 + dx * w;
+			double x1 = x0 + w;
+			double z0 = -1000.0 + dz * w;
+			double z1 = z0 + w;
+			double y0 = 0.0;
+			double y1 = RandomDouble(1.0, 101.0);
+
+			boxes0.Add(std::make_shared<Box>(Point3(x0, y0, z0), Point3(x1, y1, z1), groundMat));
+		}
+	}
+
+	auto bvh = std::make_shared<BVHNode>(boxes0, 0.0, 1.0);
+	objects->Add(bvh);
+
+	auto light = std::make_shared<DiffuseLight>(Color(7.0, 7.0, 7.0));
+	objects->Add(std::make_shared<XZRect>(123.0, 423.0, 147.0, 412.0, 554.0, light));
+
+	auto center0 = Point3(400.0, 400.0, 200.0);
+	auto center1 = center0 + Vec3(30.0, 0.0, 0.0);
+	auto movingSphereMat = std::make_shared<Lambertian>(Color(0.7, 0.3, 0.1));
+	objects->Add(std::make_shared<MovingSphere>(center0, center1, 0.0, 1.0, 50.0, movingSphereMat));
+
+	objects->Add(std::make_shared<Sphere>(Point3(260.0, 150.0, 45.0), 50.0, std::make_shared<Dielectric>(1.5)));
+	objects->Add(std::make_shared<Sphere>(Point3(0.0, 150.0, 145.0), 50.0, std::make_shared<Metal>(Color(0.8, 0.8, 0.9), 1.0)));
+
+	auto boundary = std::make_shared<Sphere>(Point3(360.0, 150.0, 145.0), 70.0, std::make_shared<Dielectric>(1.5));
+	objects->Add(boundary);
+	objects->Add(std::make_shared<ConstantMedium>(boundary, 0.2, Color(0.2, 0.4, 0.9)));
+	boundary = std::make_shared<Sphere>(Point3(0.0, 0.0, 0.0), 5000.0, std::make_shared<Dielectric>(1.5));
+	objects->Add(std::make_shared<ConstantMedium>(boundary, 0.0001, Color(1.0, 1.0, 1.0)));
+
+	auto earthMat = std::make_shared<Lambertian>(std::make_shared<ImageTexture>("Resources/Textures/earthmap.jpg"));
+	objects->Add(std::make_shared<Sphere>(Point3(400.0, 200.0, 400.0), 100.0, earthMat));
+	auto whiteTexture = std::make_shared<SolidColorTexture>(Color(1.0, 1.0, 1.0));
+	objects->Add(std::make_shared<Sphere>(Point3(220.0, 280.0, 300.0), 80.0, std::make_shared<Lambertian>(whiteTexture)));
+
+	HittableList boxes1;
+	auto whiteMat = std::make_shared<Lambertian>(Color(0.73, 0.73, 0.73));
+	int ns = 1000;
+	for (int ds = 0; ds < ns; ++ds)
+	{
+		boxes1.Add(std::make_shared<Sphere>(Point3::Random(0.0, 165.0), 10.0, whiteMat));
+	}
+
+	objects->Add(std::make_shared<Translate>(std::make_shared<RotateY>(std::make_shared<BVHNode>(boxes1, 0.0, 1.0), 15.0), Vec3(-100.0, 270.0, 395.0)));
+	return std::move(objects);
+}
+
 Color RayColor(const Ray& r, const Color& background, const Hittable& world, int depth)
 {
 	if (depth <= 0)
@@ -176,16 +268,26 @@ int main()
 {
 	// Output Image
 	constexpr double aspectRatio = 1.0;
-	constexpr int imageWidth = 600;
+	constexpr int imageWidth = 800;
 	constexpr int imageHeight = static_cast<int>(imageWidth/aspectRatio);
 	constexpr int imageChannels = 3; // RGB
-	constexpr int samplesPerPixel = 256;
+	constexpr int samplesPerPixel = 64;
 	constexpr int maximumDepth = 50;
 
 	auto outputBuffer = std::make_unique<unsigned char[]>(imageWidth*imageHeight*imageChannels);
 
 	// Camera
-	Point3 lookFrom(278.0, 278.0, -800.0);
+	// Cornell
+	//Point3 lookFrom(278.0, 278.0, -800.0);
+	//Point3 lookAt(278.0, 278.0, 0.0);
+	//Vec3 up(0.0, 1.0, 0.0);
+	//auto distToFocus = 10.0;
+	//auto aperture = 0.0;
+	//auto shutterOpen = 0.0;
+	//auto shutterClose = 1.0;
+	//auto verticalFOV = 40.0;
+
+	Point3 lookFrom(478.0, 278.0, -600.0);
 	Point3 lookAt(278.0, 278.0, 0.0);
 	Vec3 up(0.0, 1.0, 0.0);
 	auto distToFocus = 10.0;
@@ -199,7 +301,8 @@ int main()
 	//auto world = std::move(RandomScene(shutterOpen, shutterClose));
 	//auto world = std::move(TwoSpheres());
 	//auto world = std::move(SimpleLight());
-	auto world = std::move(CornellBox());
+	//auto world = std::move(CornellBoxSmoke());
+	auto world = std::move(ComplexScene());
 	Color background = Color();
 
 	// Render
