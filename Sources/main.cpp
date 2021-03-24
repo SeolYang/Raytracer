@@ -12,6 +12,7 @@
 #include <Core/ImageTexture.h>
 #include <Core/DiffuseLight.h>
 #include <Core/Rect.h>
+#include <Core/Box.h>
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
 #include <iostream>
@@ -133,6 +134,9 @@ std::unique_ptr<HittableList> CornellBox()
 	world->Add(std::make_shared<XZRect>(0.0, 555.0, 0.0, 555.0, 555.0, whiteMat));
 	world->Add(std::make_shared<XYRect>(0.0, 555.0, 0.0, 555.0, 555.0, whiteMat));
 
+	world->Add(std::make_shared<Box>(Point3(130.0, 0.0, 65.0), Point3(295.0, 165.0, 230.0), whiteMat));
+	world->Add(std::make_shared<Box>(Point3(265.0, 0.0, 295.0), Point3(430.0, 330.0, 460.0), whiteMat));
+
 	return std::move(world);
 }
 
@@ -164,7 +168,7 @@ int main()
 {
 	// Output Image
 	constexpr double aspectRatio = 1.0;
-	constexpr int imageWidth = 600.0;
+	constexpr int imageWidth = 300.0;
 	constexpr int imageHeight = static_cast<int>(imageWidth/aspectRatio);
 	constexpr int imageChannels = 3; // RGB
 	constexpr int samplesPerPixel = 256;

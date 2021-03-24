@@ -95,6 +95,7 @@
     <ClCompile Include="..\Sources\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Sources\Core\Box.h" />
     <ClInclude Include="..\Sources\Core\BVHNode.h" />
     <ClInclude Include="..\Sources\Core\Camera.h" />
     <ClInclude Include="..\Sources\Core\Color.h" />
