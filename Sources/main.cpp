@@ -117,6 +117,25 @@ std::unique_ptr<HittableList> SimpleLight()
 	return std::move(world);
 }
 
+std::unique_ptr<HittableList> CornellBox()
+{
+	auto world = std::make_unique<HittableList>();
+
+	auto redMat = std::make_shared<Lambertian>(Color(0.65, 0.05, 0.05));
+	auto whiteMat = std::make_shared<Lambertian>(Color(0.73, 0.73, 0.73));
+	auto greenMat = std::make_shared<Lambertian>(Color(0.12, 0.45, 0.15));
+	auto lightMat = std::make_shared<DiffuseLight>(Color(15.0, 15.0, 15.0));
+
+	world->Add(std::make_shared<YZRect>(0.0, 555.0, 0.0, 555.0, 555.0, greenMat));
+	world->Add(std::make_shared<YZRect>(0.0, 555.0, 0.0, 555.0, 0.0, redMat));
+	world->Add(std::make_shared<XZRect>(213.0, 343.0, 227.0, 332.0, 554.0, lightMat));
+	world->Add(std::make_shared<XZRect>(0.0, 555.0, 0.0, 555.0, 0.0, whiteMat));
+	world->Add(std::make_shared<XZRect>(0.0, 555.0, 0.0, 555.0, 555.0, whiteMat));
+	world->Add(std::make_shared<XYRect>(0.0, 555.0, 0.0, 555.0, 555.0, whiteMat));
+
+	return std::move(world);
+}
+
 Color RayColor(const Ray& r, const Color& background, const Hittable& world, int depth)
 {
 	if (depth <= 0)
@@ -144,30 +163,31 @@ Color RayColor(const Ray& r, const Color& background, const Hittable& world, int
 int main()
 {
 	// Output Image
-	constexpr double aspectRatio = 16.0 / 9.0;
-	constexpr int imageWidth = 400;
+	constexpr double aspectRatio = 1.0;
+	constexpr int imageWidth = 600.0;
 	constexpr int imageHeight = static_cast<int>(imageWidth/aspectRatio);
 	constexpr int imageChannels = 3; // RGB
-	constexpr int samplesPerPixel = 512;
+	constexpr int samplesPerPixel = 256;
 	constexpr int maximumDepth = 50;
 
 	auto outputBuffer = std::make_unique<unsigned char[]>(imageWidth*imageHeight*imageChannels);
 
 	// Camera
-	Point3 lookFrom(26.0, 3.0, 6.0);
-	Point3 lookAt(0.0, 2.0, 0.0);
+	Point3 lookFrom(278.0, 278.0, -800.0);
+	Point3 lookAt(278.0, 278.0, 0.0);
 	Vec3 up(0.0, 1.0, 0.0);
 	auto distToFocus = 10.0;
-	auto aperture = 0.1;
+	auto aperture = 0.0;
 	auto shutterOpen = 0.0;
 	auto shutterClose = 1.0;
-	auto verticalFOV = 20.0;
+	auto verticalFOV = 40.0;
 	Camera cam(lookFrom, lookAt, up, verticalFOV, aspectRatio, aperture, distToFocus, shutterOpen, shutterClose);
 
 	// World
 	//auto world = std::move(RandomScene(shutterOpen, shutterClose));
 	//auto world = std::move(TwoSpheres());
-	auto world = std::move(SimpleLight());
+	//auto world = std::move(SimpleLight());
+	auto world = std::move(CornellBox());
 	Color background = Color();
 
 	// Render

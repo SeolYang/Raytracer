@@ -10,6 +10,11 @@ public:
    {
    }
 
+   DiffuseLight(const Color& emit) :
+      DiffuseLight(std::make_shared<SolidColorTexture>(emit))
+   {
+   }
+
    bool Scatter(const Ray& rayIn, const HitRecord& rec, Color& attenuation, Ray& scattered) const override
    {
       return false;
