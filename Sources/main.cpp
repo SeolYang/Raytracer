@@ -10,6 +10,8 @@
 #include <Core/MovingSphere.h>
 #include <Core/Texture.h>
 #include <Core/ImageTexture.h>
+#include <Core/DiffuseLight.h>
+#include <Core/Rect.h>
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
 #include <iostream>
@@ -94,7 +96,28 @@ std::unique_ptr<HittableList> Earth()
 	return std::move(world);
 }
 
-Color RayColor(const Ray& r, const Hittable& world, int depth)
+std::unique_ptr<HittableList> SimpleLight()
+{
+	auto world = std::make_unique<HittableList>();
+
+	auto whiteTexture = std::make_shared<SolidColorTexture>(Color(1.0, 1.0, 1.0));
+	auto earthTexture = std::make_shared<ImageTexture>("Resources/Textures/earthmap.jpg");
+
+	auto whiteLambertMat = std::make_shared<Lambertian>(whiteTexture);
+	auto earthLambertMat = std::make_shared<Lambertian>(earthTexture);
+
+	world->Add(std::make_shared<Sphere>(Point3(0.0, -1000.0, 0.0), 1000.0, whiteLambertMat));
+	world->Add(std::make_shared<Sphere>(Point3(0.0, 2.0, 0.0), 2.0, earthLambertMat));
+
+	auto diffuseLightColor = std::make_shared<SolidColorTexture>(Color(4.0, 4.0, 4.0));
+	auto diffuseLight = std::make_shared<DiffuseLight>(diffuseLightColor);
+	world->Add(std::make_shared<Sphere>(Point3(0.0, 6.0, 0.0), 2.0, diffuseLight));
+	world->Add(std::make_shared<XYRect>(3.0, 5.0, 1.0, 3.0, -2.0, diffuseLight));
+
+	return std::move(world);
+}
+
+Color RayColor(const Ray& r, const Color& background, const Hittable& world, int depth)
 {
 	if (depth <= 0)
 	{
@@ -106,17 +129,16 @@ Color RayColor(const Ray& r, const Hittable& world, int depth)
 	{
 		Ray scattered;
 		Color attenuation;
+		Color emitted = rec.MatPtr->Emitted(rec.u, rec.v, rec.p);
 		if (rec.MatPtr->Scatter(r, rec, attenuation, scattered))
 		{
-			return attenuation * RayColor(scattered, world, depth - 1);
+			return emitted + (attenuation * RayColor(scattered, background, world, depth - 1));
 		}
 
-		return Color(1.0, 1.0, 1.0);
+		return emitted;
 	}
 
-	Vec3 unitDirection = UnitVectorOf(r.Direction);
-	auto t = 0.5 * (unitDirection.y + 1.0);
-	return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
+	return background;
 }
 
 int main()
@@ -126,14 +148,14 @@ int main()
 	constexpr int imageWidth = 400;
 	constexpr int imageHeight = static_cast<int>(imageWidth/aspectRatio);
 	constexpr int imageChannels = 3; // RGB
-	constexpr int samplesPerPixel = 100;
+	constexpr int samplesPerPixel = 512;
 	constexpr int maximumDepth = 50;
 
 	auto outputBuffer = std::make_unique<unsigned char[]>(imageWidth*imageHeight*imageChannels);
 
 	// Camera
-	Point3 lookFrom(13.0, 2.0, 3.0);
-	Point3 lookAt(0.0, 0.0, 0.0);
+	Point3 lookFrom(26.0, 3.0, 6.0);
+	Point3 lookAt(0.0, 2.0, 0.0);
 	Vec3 up(0.0, 1.0, 0.0);
 	auto distToFocus = 10.0;
 	auto aperture = 0.1;
@@ -145,7 +167,8 @@ int main()
 	// World
 	//auto world = std::move(RandomScene(shutterOpen, shutterClose));
 	//auto world = std::move(TwoSpheres());
-	auto world = std::move(Earth());
+	auto world = std::move(SimpleLight());
+	Color background = Color();
 
 	// Render
 #pragma omp parallel for schedule(dynamic, 1)
@@ -160,7 +183,7 @@ int main()
 				auto u = (double(dx) + RandomDouble()) / (imageWidth - 1);
 				auto v = (double(dy) + RandomDouble()) / (imageHeight - 1);
 				Ray r = cam.GetRay(u, v);
-				pixelColor += RayColor(r, *world, maximumDepth);
+				pixelColor += RayColor(r, background, *world, maximumDepth);
 			}
 
 			size_t base = ((imageHeight - dy - 1) * imageWidth * imageChannels) + (dx * imageChannels);

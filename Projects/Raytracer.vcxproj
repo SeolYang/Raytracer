@@ -100,6 +100,7 @@
     <ClInclude Include="..\Sources\Core\Color.h" />
     <ClInclude Include="..\Sources\Core\CoreMinimal.h" />
     <ClInclude Include="..\Sources\Core\Dielectric.h" />
+    <ClInclude Include="..\Sources\Core\DiffuseLight.h" />
     <ClInclude Include="..\Sources\Core\Hittable.h" />
     <ClInclude Include="..\Sources\Core\HittableList.h" />
     <ClInclude Include="..\Sources\Core\ImageTexture.h" />
@@ -107,6 +108,7 @@
     <ClInclude Include="..\Sources\Core\Material.h" />
     <ClInclude Include="..\Sources\Core\Metal.h" />
     <ClInclude Include="..\Sources\Core\MovingSphere.h" />
+    <ClInclude Include="..\Sources\Core\Rect.h" />
     <ClInclude Include="..\Sources\Core\Sphere.h" />
     <ClInclude Include="..\Sources\Core\Texture.h" />
     <ClInclude Include="..\Sources\Math\AABB.h" />
