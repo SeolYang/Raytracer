@@ -43,9 +43,9 @@ public:
          std::fmin(box0.Minimum.z, box1.Minimum.z));
 
       Point3 max(
-         std::fmin(box0.Maximum.x, box1.Maximum.x),
-         std::fmin(box0.Maximum.y, box1.Maximum.y),
-         std::fmin(box0.Maximum.z, box1.Maximum.z));
+         std::fmax(box0.Maximum.x, box1.Maximum.x),
+         std::fmax(box0.Maximum.y, box1.Maximum.y),
+         std::fmax(box0.Maximum.z, box1.Maximum.z));
 
       return AABB(min, max);
    }

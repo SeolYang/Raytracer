@@ -5,17 +5,15 @@
 class BVHNode : public Hittable
 {
 public:
-   BVHNode()
-   {
-   }
-
+   BVHNode() = default;
    BVHNode(const HittableList& list, double time0, double time1) :
       BVHNode(list.m_objects, 0, list.m_objects.size(), time0, time1)
    {
    }
 
-   BVHNode(const std::vector<std::shared_ptr<Hittable>>& objects, size_t start, size_t end, double time0, double time1)
+   BVHNode(const std::vector<std::shared_ptr<Hittable>>& srcObjects, size_t start, size_t end, double time0, double time1)
    {
+      auto objects = srcObjects;
       int axis = RandomInt(0, 2);
       auto boxComparator = [axis](const std::shared_ptr<Hittable> left, const std::shared_ptr<Hittable> right)->bool
       {
@@ -54,16 +52,16 @@ public:
          auto mid = start + objectSpan / 2;
          m_left = std::make_shared<BVHNode>(objects, start, mid, time0, time1);
          m_right = std::make_shared<BVHNode>(objects, mid, end, time0, time1);
-
-         AABB boxLeft;
-         AABB boxRight;
-         if (!m_left->BoundingBox(time0, time1, boxLeft) || !m_right->BoundingBox(time0, time1, boxRight))
-         {
-            std::cerr << "No bounding box in BVHNode constructor! \n";
-         }
-
-         m_aabb = AABB::SurroundingBox(boxLeft, boxRight);
       }
+
+      AABB boxLeft;
+      AABB boxRight;
+      if (!m_left->BoundingBox(time0, time1, boxLeft) || !m_right->BoundingBox(time0, time1, boxRight))
+      {
+         std::cerr << "No bounding box in BVHNode constructor! \n";
+      }
+
+      m_aabb = AABB::SurroundingBox(boxLeft, boxRight);
    }
 
    bool Hit(const Ray& r, double tMin, double tMax, HitRecord& rec) const override
