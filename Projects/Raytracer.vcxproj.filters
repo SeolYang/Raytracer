@@ -104,5 +104,8 @@
     <ClInclude Include="..\Sources\Core\Box.h">
       <Filter>Sources\Core\Hittable</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Core\Instance.h">
+      <Filter>Sources\Core\Hittable</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

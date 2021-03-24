@@ -105,6 +105,7 @@
     <ClInclude Include="..\Sources\Core\Hittable.h" />
     <ClInclude Include="..\Sources\Core\HittableList.h" />
     <ClInclude Include="..\Sources\Core\ImageTexture.h" />
+    <ClInclude Include="..\Sources\Core\Instance.h" />
     <ClInclude Include="..\Sources\Core\Lambertian.h" />
     <ClInclude Include="..\Sources\Core\Material.h" />
     <ClInclude Include="..\Sources\Core\Metal.h" />
