@@ -19,6 +19,7 @@
 #include <Math/Vec3.h>
 #include <Math/Ray.h>
 #include <iostream>
+#include <chrono>
 
 std::unique_ptr<HittableList> RandomScene(double shutterOpen = 0.0, double shutterClose = 1.0)
 {
@@ -271,7 +272,7 @@ int main()
 	constexpr int imageWidth = 800;
 	constexpr int imageHeight = static_cast<int>(imageWidth/aspectRatio);
 	constexpr int imageChannels = 3; // RGB
-	constexpr int samplesPerPixel = 64;
+	constexpr int samplesPerPixel = 8192;
 	constexpr int maximumDepth = 50;
 
 	auto outputBuffer = std::make_unique<unsigned char[]>(imageWidth*imageHeight*imageChannels);
@@ -305,6 +306,8 @@ int main()
 	auto world = std::move(ComplexScene());
 	Color background = Color();
 
+	auto begin = std::chrono::system_clock::now();
+
 	// Render
 #pragma omp parallel for schedule(dynamic, 1)
 	for (int dy = imageHeight - 1; dy >= 0; --dy)
@@ -328,6 +331,10 @@ int main()
 
 	stbi_write_png("output.png", imageWidth, imageHeight, imageChannels, outputBuffer.get(), imageWidth * imageChannels);
 	std::cerr << "\nRendering Done\n";
+
+	auto end = std::chrono::system_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(end - begin);
+	std::cout << "Taken : " << elapsed.count() << " seconds" << std::endl;
 
    return 0;
 }
